@@ -5,48 +5,57 @@ const N8N_ENDPOINT = process.env.N8N_ENDPOINT;
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const dateFilter = searchParams.get("date"); // YYYY-MM-DD
+    const dateFilter = searchParams.get("date");
 
     if (!N8N_ENDPOINT) {
       return NextResponse.json(
-        { error: "N8N_ENDPOINT is not configured" },
+        { error: "N8N_ENDPOINT not configured" },
         { status: 500 }
       );
     }
 
-    const res = await fetch(N8N_ENDPOINT, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      cache: "no-store",
-    });
+    const res = await fetch(N8N_ENDPOINT, { cache: "no-store" });
 
-    if (!res.ok) {
+    const text = await res.text(); // ← 生で受け取る
+    console.log("RAW FROM N8N:", text);
+
+    let json;
+
+    try {
+      json = JSON.parse(text);
+    } catch (e) {
       return NextResponse.json(
-        { error: "Failed to fetch from n8n" },
+        { error: "Invalid JSON from n8n", raw: text },
         { status: 500 }
       );
     }
 
-    const data = await res.json();
+    // n8n 構造: [ { rows: [...] } ]
+    const rows = json?.[0]?.rows;
 
-    // JSON は [ { rows: [...] } ] という構造
-    let rows = data[0]?.rows || [];
-
-    // --- 日付でフィルタ ---
-    if (dateFilter) {
-      rows = rows.filter((r: any) => r.Date === dateFilter);
+    if (!Array.isArray(rows)) {
+      return NextResponse.json(
+        { error: "Rows is not an array", raw: json },
+        { status: 500 }
+      );
     }
 
-    // --- 時間ソート ---
-    rows.sort((a: any, b: any) =>
+    // 日付フィルタ
+    let filtered = rows;
+    if (dateFilter) {
+      filtered = filtered.filter((r) => r.Date === dateFilter);
+    }
+
+    // 時間ソート
+    filtered.sort((a, b) =>
       (a.ArrivalTime || "").localeCompare(b.ArrivalTime || "")
     );
 
-    return NextResponse.json(rows, { status: 200 });
+    return NextResponse.json(filtered, { status: 200 });
 
-  } catch (err: any) {
+  } catch (e: any) {
     return NextResponse.json(
-      { error: err.message || "Unknown error" },
+      { error: e.message || "Unknown error" },
       { status: 500 }
     );
   }
