@@ -6,8 +6,8 @@ export default function ReservationCard({ reservation }) {
 
   const isLunch = data.Service === "lunch";
 
-  const bgColor = isLunch ? "bg-blue-50" : "bg-orange-50";
-  const borderColor = isLunch ? "border-blue-300" : "border-orange-300";
+  const bgColor = isLunch ? "bg-orange-50" : "bg-blue-50";
+  const borderColor = isLunch ? "border-orange-300" : "border-blue-300";
 
   return (
     <div className={`p-4 rounded-lg border ${bgColor} ${borderColor} flex justify-between items-center mb-3`}>
