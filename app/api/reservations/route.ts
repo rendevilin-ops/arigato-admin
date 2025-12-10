@@ -14,7 +14,6 @@ export async function GET(req: Request) {
       );
     }
 
-    // n8n から JSON 取得
     const res = await fetch(N8N_ENDPOINT, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
@@ -30,18 +29,18 @@ export async function GET(req: Request) {
 
     const data = await res.json();
 
-    // n8n は { rows: [...] } を返す前提
-    let rows = data.rows || [];
+    // JSON は [ { rows: [...] } ] という構造
+    let rows = data[0]?.rows || [];
 
-    // --- 日付でフィルタ (キー名は後で調整してOK) ---
+    // --- 日付でフィルタ ---
     if (dateFilter) {
-      rows = rows.filter((r: any) => r.date === dateFilter);
+      rows = rows.filter((r: any) => r.Date === dateFilter);
     }
 
-    // --- 時間ソート (arrivalTime) ---
-    rows.sort((a: any, b: any) => {
-      return (a.arrivalTime || "").localeCompare(b.arrivalTime || "");
-    });
+    // --- 時間ソート ---
+    rows.sort((a: any, b: any) =>
+      (a.ArrivalTime || "").localeCompare(b.ArrivalTime || "")
+    );
 
     return NextResponse.json(rows, { status: 200 });
 
