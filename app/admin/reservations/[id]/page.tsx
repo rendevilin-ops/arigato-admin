@@ -1,9 +1,28 @@
-export default function ReservationDetailPage({ params }) {
+import { notFound } from "next/navigation";
+
+export default async function ReservationDetailPage({ params }) {
+  const { id } = params;
+
+  if (!id) return notFound();
+
+  // ★ 相対URLにする（これが正解）
+  const url = `/api/reservations?id=${id}`;
+
+  const res = await fetch(url, { cache: "no-store" });
+
+  if (!res.ok) return notFound();
+
+  const data = await res.json();
+
+  if (!data) return notFound();
+
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold">Reservation Detail</h1>
+      <h1 className="text-2xl font-bold mb-4">Reservation Detail</h1>
 
-      <p>ID: {params.id}</p>
+      <pre className="bg-gray-100 p-4 rounded">
+        {JSON.stringify(data, null, 2)}
+      </pre>
 
       <a
         href="/admin/reservations"
