@@ -7,18 +7,14 @@ export default function ReservationDetailPage({ params }) {
 
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   async function load() {
     setLoading(true);
     try {
-      const res = await fetch(`/api/reservations?id=${id}`, {
-        cache: "no-store",
-      });
-
+      const res = await fetch(`/api/reservations?id=${id}`);
       const json = await res.json();
       setData(json);
-    } catch (e) {
-      setData(null);
     } finally {
       setLoading(false);
     }
@@ -28,18 +24,96 @@ export default function ReservationDetailPage({ params }) {
     load();
   }, [id]);
 
-  if (loading) return <div className="p-6">Loading...</div>;
+  async function saveChanges() {
+    setSaving(true);
 
-  if (!data)
-    return <div className="p-6 text-red-600">Reservation not found.</div>;
+    const res = await fetch(`/api/reservations/update`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data), // ← 編集済みデータを全部送る
+    });
+
+    const json = await res.json();
+
+    alert(json.message || "Updated!");
+    setSaving(false);
+  }
+
+  if (loading) return <div className="p-6">Loading...</div>;
+  if (!data) return <div className="p-6">Not Found</div>;
 
   return (
     <div className="p-6 space-y-4">
       <h1 className="text-2xl font-bold">Reservation Detail</h1>
 
-      <pre className="bg-gray-100 p-4 rounded text-sm">
-        {JSON.stringify(data, null, 2)}
-      </pre>
+      {/* Editable fields */}
+      <div className="space-y-2">
+
+        <div>
+          <label className="block text-sm font-medium">First Name</label>
+          <input
+            value={data.FirstName}
+            onChange={(e) =>
+              setData({ ...data, FirstName: e.target.value })
+            }
+            className="border p-2 rounded w-full"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">Last Name</label>
+          <input
+            value={data.LastName}
+            onChange={(e) =>
+              setData({ ...data, LastName: e.target.value })
+            }
+            className="border p-2 rounded w-full"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">Arrival Time</label>
+          <input
+            value={data.ArrivalTime}
+            onChange={(e) =>
+              setData({ ...data, ArrivalTime: e.target.value })
+            }
+            className="border p-2 rounded w-full"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">Pax</label>
+          <input
+            type="number"
+            value={data.Pax}
+            onChange={(e) =>
+              setData({ ...data, Pax: e.target.value })
+            }
+            className="border p-2 rounded w-full"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">Admin Note</label>
+          <textarea
+            value={data.AdminNote}
+            onChange={(e) =>
+              setData({ ...data, AdminNote: e.target.value })
+            }
+            className="border p-2 rounded w-full"
+            rows={4}
+          />
+        </div>
+
+        <button
+          onClick={saveChanges}
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+          disabled={saving}
+        >
+          {saving ? "Saving..." : "Save Changes"}
+        </button>
+      </div>
 
       <a
         href="/admin/reservations"
