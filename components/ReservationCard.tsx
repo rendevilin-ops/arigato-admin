@@ -1,7 +1,9 @@
 import Link from "next/link";
 import StatusBadge from "./StatusBadge";
 
-export default function ReservationCard({ data }) {
+export default function ReservationCard({ reservation }) {
+  const data = reservation; // ← 呼び出しと内部処理を分離できる
+
   const isLunch = data.Service === "lunch";
 
   const bgColor = isLunch ? "bg-blue-50" : "bg-orange-50";
