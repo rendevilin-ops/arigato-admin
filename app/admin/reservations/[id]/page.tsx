@@ -1,31 +1,43 @@
-import { notFound } from "next/navigation";
-import { headers } from "next/headers";
+"use client";
 
-export default async function ReservationDetailPage({ params }) {
+import { useEffect, useState } from "react";
+
+export default function ReservationDetailPage({ params }) {
   const { id } = params;
 
-  if (!id) return notFound();
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  // ★ Host ヘッダーを取得
-  const host = headers().get("host");
-  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+  async function load() {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/reservations?id=${id}`, {
+        cache: "no-store",
+      });
 
-  // ★ 絶対 URL を構築
-  const url = `${protocol}://${host}/api/reservations?id=${id}`;
+      const json = await res.json();
+      setData(json);
+    } catch (e) {
+      setData(null);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  // ★ fetch
-  const res = await fetch(url, { cache: "no-store" });
+  useEffect(() => {
+    load();
+  }, [id]);
 
-  if (!res.ok) return notFound();
+  if (loading) return <div className="p-6">Loading...</div>;
 
-  const data = await res.json();
-  if (!data) return notFound();
+  if (!data)
+    return <div className="p-6 text-red-600">Reservation not found.</div>;
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Reservation Detail</h1>
+    <div className="p-6 space-y-4">
+      <h1 className="text-2xl font-bold">Reservation Detail</h1>
 
-      <pre className="bg-gray-100 p-4 rounded">
+      <pre className="bg-gray-100 p-4 rounded text-sm">
         {JSON.stringify(data, null, 2)}
       </pre>
 
