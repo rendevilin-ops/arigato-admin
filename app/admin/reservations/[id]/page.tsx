@@ -1,44 +1,20 @@
 import { notFound } from "next/navigation";
-import { headers } from "next/headers";
-
-function getBaseUrl() {
-  const h = headers();
-  const host = h.get("host");
-  const protocol = h.get("x-forwarded-proto") || "https";
-  return `${protocol}://${host}`;
-}
 
 export default async function ReservationDetailPage({ params }) {
   const { id } = params;
 
   if (!id) return notFound();
 
-  const baseUrl = getBaseUrl();
-  const url = `${baseUrl}/api/reservations?id=${id}`;
+  // ★ 相対パスでOK（絶対パス禁止）
+  const res = await fetch(`/api/reservations?id=${id}`, {
+    cache: "no-store",
+  });
 
-  let data = null;
+  if (!res.ok) return notFound();
 
-  try {
-    const res = await fetch(url, { cache: "no-store" });
+  const data = await res.json();
 
-    if (!res.ok) {
-      console.error("FETCH ERROR STATUS:", res.status);
-      return notFound();
-    }
-
-    const text = await res.text();
-
-    try {
-      data = JSON.parse(text);
-    } catch (err) {
-      console.error("JSON PARSE ERROR:", err);
-      return notFound();
-    }
-  } catch (err) {
-    console.error("FETCH FAILED:", err);
-    return notFound();
-  }
-
+  // null だった場合のみ notFound
   if (!data) return notFound();
 
   return (
