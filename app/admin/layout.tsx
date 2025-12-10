@@ -1,5 +1,5 @@
-import "../../globals.css";
-import Header from "@/components/Header";
+import "../globals.css"; // 1階層上へ修正
+import Header from "../../components/Header"; // 相対パスに変更
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
