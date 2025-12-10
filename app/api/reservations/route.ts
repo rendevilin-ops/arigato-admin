@@ -6,6 +6,7 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const dateFilter = searchParams.get("date");
+    const idFilter = searchParams.get("id");
 
     if (!N8N_ENDPOINT) {
       return NextResponse.json(
@@ -15,8 +16,7 @@ export async function GET(req: Request) {
     }
 
     const res = await fetch(N8N_ENDPOINT, { cache: "no-store" });
-
-    const text = await res.text(); // ← 生で受け取る
+    const text = await res.text();
     console.log("RAW FROM N8N:", text);
 
     let json;
@@ -38,6 +38,12 @@ export async function GET(req: Request) {
         { error: "Rows is not an array", raw: json },
         { status: 500 }
       );
+    }
+
+    // id 指定なら単一予約を返す（最優先）
+    if (idFilter) {
+      const item = rows.find((r) => r.ReservationID === idFilter);
+      return NextResponse.json(item || null, { status: 200 });
     }
 
     // 日付フィルタ
