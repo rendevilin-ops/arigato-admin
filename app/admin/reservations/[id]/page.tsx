@@ -3,20 +3,19 @@ import { notFound } from "next/navigation";
 export default async function ReservationDetailPage({ params }) {
   const { id } = params;
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/reservations?id=${id}`,
-    { cache: "no-store" }
-  );
+  // 相対パス fetch（Next.js 14 の正攻法）
+  const res = await fetch(`/api/reservations?id=${id}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) return notFound();
 
   const data = await res.json();
-
   if (!data) return notFound();
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">
-        Reservation Detail
-      </h1>
+      <h1 className="text-2xl font-bold mb-4">Reservation Detail</h1>
 
       <div className="rounded-lg border p-4 bg-white shadow">
         <p><strong>Name:</strong> {data.FirstName} {data.LastName}</p>
@@ -30,22 +29,10 @@ export default async function ReservationDetailPage({ params }) {
         <p><strong>Email:</strong> {data.Email}</p>
         <p><strong>Phone:</strong> {data.Phone}</p>
 
-        <p className="mt-4">
-          <strong>Comment:</strong> {data.Comment || "(none)"}
-        </p>
-
-        <p className="mt-2 text-xs text-gray-500">
-          Created: {data.Timestamp}
-        </p>
-        <p className="text-xs text-gray-500">
-          Updated: {data.UpdatedAt}
-        </p>
+        <p className="mt-4"><strong>Comment:</strong> {data.Comment || "(none)"}</p>
       </div>
 
-      <a
-        href="/admin/reservations"
-        className="inline-block mt-6 text-blue-600 underline"
-      >
+      <a href="/admin/reservations" className="inline-block mt-6 text-blue-600 underline">
         ← Back to list
       </a>
     </div>
