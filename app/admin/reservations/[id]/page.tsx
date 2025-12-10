@@ -3,16 +3,36 @@ import { notFound } from "next/navigation";
 export default async function ReservationDetailPage({ params }) {
   const { id } = params;
 
-  if (!id) return notFound();
+  // 絶対URLを生成（相対URLを避ける）
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
 
-  // ★ 相対URLにする（これが正解）
-  const url = `/api/reservations?id=${id}`;
+  const url = `${baseUrl}/api/reservations?id=${id}`;
 
-  const res = await fetch(url, { cache: "no-store" });
+  let data = null;
 
-  if (!res.ok) return notFound();
+  try {
+    const res = await fetch(url, { cache: "no-store" });
 
-  const data = await res.json();
+    if (!res.ok) {
+      console.error("FETCH ERROR STATUS:", res.status);
+      return notFound();
+    }
+
+    const text = await res.text();
+    console.log("RAW TEXT:", text);
+
+    try {
+      data = JSON.parse(text);
+    } catch (err) {
+      console.error("JSON PARSE ERROR:", err);
+      return notFound();
+    }
+  } catch (err) {
+    console.error("FETCH FAILED:", err);
+    return notFound();
+  }
 
   if (!data) return notFound();
 
