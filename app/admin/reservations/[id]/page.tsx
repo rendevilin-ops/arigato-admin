@@ -10,7 +10,8 @@ export default async function ReservationDetailPage({ params }) {
   const host = headers().get("host");
   const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
 
-
+  // ★ 絶対 URL を構築
+  const url = `${protocol}://${host}/api/reservations?id=${id}`;
 
   // ★ fetch
   const res = await fetch(url, { cache: "no-store" });
