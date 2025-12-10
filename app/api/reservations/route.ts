@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-
-const N8N_ENDPOINT = process.env.N8N_ENDPOINT;
+import kv from "@/lib/kv";
 
 export async function GET(req: Request) {
   try {
@@ -8,52 +7,35 @@ export async function GET(req: Request) {
     const dateFilter = searchParams.get("date");
     const idFilter = searchParams.get("id");
 
-    if (!N8N_ENDPOINT) {
-      return NextResponse.json(
-        { error: "N8N_ENDPOINT not configured" },
-        { status: 500 }
-      );
+    // ★ Redis から JSON を取得
+    const data = await kv.get("reservation");
+
+    if (!data) {
+      return NextResponse.json([], { status: 200 });
     }
 
-    const res = await fetch(N8N_ENDPOINT, { cache: "no-store" });
-    const text = await res.text();
+    // data = { reservation: […] } の想定
+    const rows = data.reservation ?? [];
 
-    let json;
-    try {
-      json = JSON.parse(text);
-    } catch (e) {
-      return NextResponse.json(
-        { error: "Invalid JSON from n8n", raw: text },
-        { status: 500 }
-      );
-    }
-
-    // ★ rows は必ず json[0].rows
-    const rows = json?.[0]?.rows || [];
-
-    // ★ id が指定された場合 → 予約1件を返す
+    // ID フィルタ
     if (idFilter) {
-      const item = rows.find((r) => r.ReservationID === idFilter);
-      return NextResponse.json(item || null, { status: 200 });
+      const item = rows.find((r: any) => r.ReservationID === idFilter);
+      return NextResponse.json(item || null);
     }
 
-    // ★ 日付フィルタ
+    // 日付でフィルタ
     let filtered = rows;
     if (dateFilter) {
-      filtered = filtered.filter((r) => r.Date === dateFilter);
+      filtered = filtered.filter((r: any) => r.date === dateFilter);
     }
 
-    // ★ 時間順でソート
-    filtered.sort((a, b) =>
+    // ArrivalTime 順にソート
+    filtered.sort((a: any, b: any) =>
       (a.ArrivalTime || "").localeCompare(b.ArrivalTime || "")
     );
 
-    return NextResponse.json(filtered, { status: 200 });
-
+    return NextResponse.json(filtered);
   } catch (e: any) {
-    return NextResponse.json(
-      { error: e.message || "Unknown error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
