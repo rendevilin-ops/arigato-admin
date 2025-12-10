@@ -1,13 +1,19 @@
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
+
+function getBaseUrl() {
+  const h = headers();
+  const host = h.get("host");
+  const protocol = h.get("x-forwarded-proto") || "https";
+  return `${protocol}://${host}`;
+}
 
 export default async function ReservationDetailPage({ params }) {
   const { id } = params;
 
-  // 絶対URLを生成（相対URLを避ける）
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000";
+  if (!id) return notFound();
 
+  const baseUrl = getBaseUrl();
   const url = `${baseUrl}/api/reservations?id=${id}`;
 
   let data = null;
@@ -21,7 +27,6 @@ export default async function ReservationDetailPage({ params }) {
     }
 
     const text = await res.text();
-    console.log("RAW TEXT:", text);
 
     try {
       data = JSON.parse(text);
