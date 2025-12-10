@@ -1,29 +1,29 @@
 import Link from "next/link";
 import StatusBadge from "./StatusBadge";
 
-export default function ReservationCard({ reservation }: any) {
+export default function ReservationCard({ data }) {
+  const isLunch = data.Service === "lunch";
+
+  const bgColor = isLunch ? "bg-blue-50" : "bg-orange-50";
+  const borderColor = isLunch ? "border-blue-300" : "border-orange-300";
+
   return (
-    <Link
-      href={`/admin/reservations/${reservation.ReservationID}`}
-      className="block border rounded-lg p-4 shadow-sm bg-white hover:bg-gray-50 transition"
-    >
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-lg font-semibold">
-            {reservation.FirstName} {reservation.LastName}
-          </h2>
+    <div className={`p-4 rounded-lg border ${bgColor} ${borderColor} flex justify-between items-center mb-3`}>
+      <div>
+        <h3 className="font-semibold text-lg">
+          {data.FirstName} {data.LastName}
+        </h3>
 
-          <p className="text-sm text-gray-700">
-            {reservation.ArrivalTime} / {reservation.Pax} pax
-          </p>
+        <p className="text-sm text-gray-600">
+          {data.ArrivalTime} / {data.Pax} pax
+        </p>
 
-          <p className="text-sm text-gray-500">
-            Service: {reservation.Service}
-          </p>
-        </div>
-
-        <StatusBadge status={reservation.Status || "pending"} />
+        <p className="text-xs text-gray-500">
+          Service: {data.Service}
+        </p>
       </div>
-    </Link>
+
+      <StatusBadge status={data.Status} />
+    </div>
   );
 }
