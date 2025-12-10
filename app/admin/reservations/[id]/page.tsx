@@ -9,7 +9,7 @@ export default async function ReservationDetailPage({ params }) {
     ? `https://${process.env.VERCEL_URL}`
     : "http://localhost:3000";
 
-  const url = `${base}/api/reservations?id=${id}`;
+  const url = `${base}/api/reservations/?id=${id}`;
 
   console.log("FETCHING:", url);
 
