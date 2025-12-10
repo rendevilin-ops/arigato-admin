@@ -26,18 +26,29 @@ export default function ReservationDetailPage({ params }) {
 
   async function saveChanges() {
     setSaving(true);
-
+  
+    // GAS が求める payload を作成
+    const payload = {
+      action: "update",
+      sheetId: "1VRUijsnLJzzg-MfSIQBVimLq_Y52o4J9ebvg9MBbPDA",
+      tab: "Reservations",
+      matchColumn: "ReservationID",
+      mapMode: "auto",
+      values: { ...data }  // 編集された内容を全部渡す
+    };
+  
     const res = await fetch(`/api/reservations/update`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data), // ← 編集済みデータを全部送る
+      body: JSON.stringify(payload),
     });
-
+  
     const json = await res.json();
-
+  
     alert(json.message || "Updated!");
     setSaving(false);
   }
+
 
   if (loading) return <div className="p-6">Loading...</div>;
   if (!data) return <div className="p-6">Not Found</div>;
