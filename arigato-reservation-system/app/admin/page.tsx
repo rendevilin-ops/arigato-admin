@@ -1,95 +1,121 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-type Reservation = {
-  ReservationID: string;
-  Date: string;
-  Service: string;
-  ArrivalTime: string;
-  FirstName: string;
-  LastName: string;
-  Pax: string;
-  Status: string;
-};
+// -----------------------
+// ダミーデータ（UI確認用）
+// 後で API の fetch に切り替える
+// -----------------------
+const dummyData = [
+  {
+    ReservationID: "A001",
+    ArrivalTime: "18:00",
+    FirstName: "Yuma",
+    LastName: "Yokoyama",
+    Pax: "2",
+    Status: "pending",
+  },
+  {
+    ReservationID: "A002",
+    ArrivalTime: "19:30",
+    FirstName: "Marie",
+    LastName: "Dupont",
+    Pax: "3",
+    Status: "confirmed",
+  },
+  {
+    ReservationID: "A003",
+    ArrivalTime: "21:00",
+    FirstName: "Pierre",
+    LastName: "Martin",
+    Pax: "1",
+    Status: "cancelled",
+  },
+];
 
-export default function AdminDayView() {
-  const [date, setDate] = useState<string>(() => {
-    // 今日の日付 YYYY-MM-DD を生成
-    return new Date().toISOString().split("T")[0];
-  });
-
-  const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-
-  // 予約データの取得
-  const fetchReservations = async () => {
-    try {
-      setLoading(true);
-
-      const res = await fetch(`/api/reservations?date=${date}`, {
-        cache: "no-store",
-      });
-
-      const json = await res.json();
-      setReservations(json);
-    } catch (err) {
-      console.error("Failed to load reservations:", err);
-    } finally {
-      setLoading(false);
-    }
+// -----------------------
+// Status Badge コンポーネント
+// -----------------------
+function StatusBadge({ status }: { status: string }) {
+  const COLOR: any = {
+    pending: "bg-yellow-200 text-yellow-800",
+    confirmed: "bg-green-200 text-green-800",
+    cancelled: "bg-red-200 text-red-800",
   };
 
-  // 初回ロード & 日付変更で実行
-  useEffect(() => {
-    fetchReservations();
-  }, [date]);
+  return (
+    <span className={`px-2 py-1 rounded text-sm ${COLOR[status]}`}>
+      {status}
+    </span>
+  );
+}
+
+// -----------------------
+// メイン Day View
+// -----------------------
+export default function AdminDayView() {
+  const today = new Date().toISOString().split("T")[0];
+
+  const [date, setDate] = useState(today);
+
+  const prevDay = () => {
+    const d = new Date(date);
+    d.setDate(d.getDate() - 1);
+    setDate(d.toISOString().split("T")[0]);
+  };
+
+  const nextDay = () => {
+    const d = new Date(date);
+    d.setDate(d.getDate() + 1);
+    setDate(d.toISOString().split("T")[0]);
+  };
 
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold">Réservations – {date}</h1>
 
-      {/* 日付選択 */}
-      <div>
+      {/* 日付コントロール */}
+      <div className="flex items-center gap-4">
+        <button onClick={prevDay} className="px-3 py-2 border rounded">
+          ← 前日
+        </button>
+
         <input
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
           className="border p-2 rounded"
         />
+
+        <button onClick={nextDay} className="px-3 py-2 border rounded">
+          翌日 →
+        </button>
       </div>
 
-      {/* ローディング */}
-      {loading && <p>Chargement...</p>}
-
-      {/* データがない場合 */}
-      {!loading && reservations.length === 0 && (
-        <p className="text-gray-500">Aucune réservation pour cette date.</p>
-      )}
-
-      {/* 予約リスト */}
+      {/* 予約一覧 */}
       <div className="space-y-3">
-        {reservations.map((r) => (
+        {dummyData.map((r) => (
           <div
             key={r.ReservationID}
-            className="border rounded p-4 shadow-sm flex justify-between items-center hover:bg-gray-50 cursor-pointer"
+            className="border rounded p-4 shadow-sm flex justify-between items-center"
           >
             <div>
               <p className="text-lg font-semibold">
                 {r.ArrivalTime} — {r.FirstName} {r.LastName}
               </p>
-              <p className="text-gray-600">
-                {r.Pax} couverts • {r.Status}
-              </p>
+              <p className="text-gray-600">{r.Pax} couverts</p>
             </div>
 
-            {/* 詳細画面へのリンク */}
-            <a
-              href={`/admin/reservations/${r.ReservationID}`}
-              className="text-blue-600 underline"
-            >
-              Détails
-            </a>
+            <div className="flex items-center gap-4">
+              <StatusBadge status={r.Status} />
+
+              <a
+                href={`/admin/reservations/${r.ReservationID}`}
+                className="text-blue-600 underline"
+              >
+                Détails
+              </a>
+            </div>
           </div>
         ))}
       </div>
