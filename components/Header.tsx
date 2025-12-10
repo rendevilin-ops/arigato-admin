@@ -1,0 +1,16 @@
+import Link from "next/link";
+
+export default function Header() {
+  return (
+    <header className="bg-white shadow p-4 flex items-center justify-between">
+      <div className="text-xl font-bold">Arigato Admin</div>
+
+      <nav className="space-x-6">
+        <Link href="/admin">Réservations</Link>
+        <Link href="/admin/new">Nouvelle réservation</Link>
+        <Link href="/admin/customers">Clients</Link>
+        <Link href="/admin/holidays">Jours fériés / Fermetures</Link>
+      </nav>
+    </header>
+  );
+}
