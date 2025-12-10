@@ -4,7 +4,8 @@ import StatusBadge from "./StatusBadge";
 export default function ReservationCard({ reservation }) {
   const data = reservation;
 
-  const isLunch = data.Service === "lunch";
+  // ★ KV では "service"（小文字）
+  const isLunch = data.service === "lunch";
 
   const bgColor = isLunch ? "bg-orange-50" : "bg-blue-50";
   const borderColor = isLunch ? "border-orange-300" : "border-blue-300";
@@ -26,7 +27,7 @@ export default function ReservationCard({ reservation }) {
           </p>
 
           <p className="text-xs text-gray-500">
-            Service: {data.Service}
+            Service: {data.service}
           </p>
         </div>
 
