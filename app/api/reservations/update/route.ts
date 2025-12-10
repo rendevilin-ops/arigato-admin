@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 const N8N_UPDATE_WEBHOOK =
-  "https://n8n-arigato.workflows.dev/webhook/reservation-update";
+  "https://n8n-sab.onrender.com/webhook-test/reservation-update";
 
 export async function POST(req: Request) {
   try {
@@ -26,3 +26,4 @@ export async function POST(req: Request) {
     );
   }
 }
+
