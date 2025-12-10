@@ -26,29 +26,24 @@ export default function ReservationDetailPage({ params }) {
 
   async function saveChanges() {
     setSaving(true);
-  
-    // GAS が求める payload を作成
+
+    // n8n 用の新仕様 payload
     const payload = {
-      action: "update",
-      sheetId: "1VRUijsnLJzzg-MfSIQBVimLq_Y52o4J9ebvg9MBbPDA",
-      tab: "Reservations",
-      matchColumn: "ReservationID",
-      mapMode: "auto",
-      values: { ...data }  // 編集された内容を全部渡す
+      type: "reservation_update",
+      reservation: { ...data }
     };
-  
+
     const res = await fetch(`/api/reservations/update`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-  
+
     const json = await res.json();
-  
-    alert(json.message || "Updated!");
+
+    alert(json.status || "Updated!");
     setSaving(false);
   }
-
 
   if (loading) return <div className="p-6">Loading...</div>;
   if (!data) return <div className="p-6">Not Found</div>;
@@ -57,16 +52,12 @@ export default function ReservationDetailPage({ params }) {
     <div className="p-6 space-y-4">
       <h1 className="text-2xl font-bold">Reservation Detail</h1>
 
-      {/* Editable fields */}
       <div className="space-y-2">
-
         <div>
           <label className="block text-sm font-medium">First Name</label>
           <input
             value={data.FirstName}
-            onChange={(e) =>
-              setData({ ...data, FirstName: e.target.value })
-            }
+            onChange={(e) => setData({ ...data, FirstName: e.target.value })}
             className="border p-2 rounded w-full"
           />
         </div>
@@ -75,9 +66,7 @@ export default function ReservationDetailPage({ params }) {
           <label className="block text-sm font-medium">Last Name</label>
           <input
             value={data.LastName}
-            onChange={(e) =>
-              setData({ ...data, LastName: e.target.value })
-            }
+            onChange={(e) => setData({ ...data, LastName: e.target.value })}
             className="border p-2 rounded w-full"
           />
         </div>
@@ -86,9 +75,7 @@ export default function ReservationDetailPage({ params }) {
           <label className="block text-sm font-medium">Arrival Time</label>
           <input
             value={data.ArrivalTime}
-            onChange={(e) =>
-              setData({ ...data, ArrivalTime: e.target.value })
-            }
+            onChange={(e) => setData({ ...data, ArrivalTime: e.target.value })}
             className="border p-2 rounded w-full"
           />
         </div>
@@ -98,9 +85,7 @@ export default function ReservationDetailPage({ params }) {
           <input
             type="number"
             value={data.Pax}
-            onChange={(e) =>
-              setData({ ...data, Pax: e.target.value })
-            }
+            onChange={(e) => setData({ ...data, Pax: e.target.value })}
             className="border p-2 rounded w-full"
           />
         </div>
@@ -108,10 +93,8 @@ export default function ReservationDetailPage({ params }) {
         <div>
           <label className="block text-sm font-medium">Admin Note</label>
           <textarea
-            value={data.AdminNote}
-            onChange={(e) =>
-              setData({ ...data, AdminNote: e.target.value })
-            }
+            value={data.AdminNote || ""}
+            onChange={(e) => setData({ ...data, AdminNote: e.target.value })}
             className="border p-2 rounded w-full"
             rows={4}
           />
@@ -126,10 +109,7 @@ export default function ReservationDetailPage({ params }) {
         </button>
       </div>
 
-      <a
-        href="/admin/reservations"
-        className="inline-block mt-6 text-blue-600 underline"
-      >
+      <a href="/admin/reservations" className="inline-block mt-6 text-blue-600 underline">
         ← Back to list
       </a>
     </div>
