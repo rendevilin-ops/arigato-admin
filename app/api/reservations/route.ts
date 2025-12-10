@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const N8N_ENDPOINT = process.env.N8N_ENDPOINT; // .env.local に書く
+const N8N_ENDPOINT = process.env.N8N_ENDPOINT;
 
 export async function GET(req: Request) {
   try {
@@ -14,7 +14,7 @@ export async function GET(req: Request) {
       );
     }
 
-    // n8n のワークフローにリクエスト
+    // n8n から JSON 取得
     const res = await fetch(N8N_ENDPOINT, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
@@ -28,18 +28,19 @@ export async function GET(req: Request) {
       );
     }
 
-    const data = await res.json(); // ← rows が配列で返ってくる
+    const data = await res.json();
 
-    let rows = data;
+    // n8n は { rows: [...] } を返す前提
+    let rows = data.rows || [];
 
-    // 日付フィルターが指定されていれば絞る
+    // --- 日付でフィルタ (キー名は後で調整してOK) ---
     if (dateFilter) {
-      rows = rows.filter((r: any) => r.Date === dateFilter);
+      rows = rows.filter((r: any) => r.date === dateFilter);
     }
 
-    // 時間でソート（ArrivalTime は "21:00" の形式）
+    // --- 時間ソート (arrivalTime) ---
     rows.sort((a: any, b: any) => {
-      return a.ArrivalTime.localeCompare(b.ArrivalTime);
+      return (a.arrivalTime || "").localeCompare(b.arrivalTime || "");
     });
 
     return NextResponse.json(rows, { status: 200 });
