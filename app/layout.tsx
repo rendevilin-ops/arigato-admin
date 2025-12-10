@@ -1,5 +1,3 @@
-import "./globals.css";
-
 export const metadata = {
   title: "Arigato Reservation System",
   description: "Arigato Restaurant Reservation UI"
