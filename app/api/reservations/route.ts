@@ -15,41 +15,40 @@ export async function GET(req: Request) {
       );
     }
 
-    // n8n へリクエスト
     const res = await fetch(N8N_ENDPOINT, { cache: "no-store" });
     const text = await res.text();
 
     let json;
     try {
       json = JSON.parse(text);
-    } catch (_) {
-      return NextResponse.json({ error: "Invalid JSON", raw: text });
+    } catch (e) {
+      return NextResponse.json(
+        { error: "Invalid JSON from n8n", raw: text },
+        { status: 500 }
+      );
     }
 
-    // ★ n8n は rows ではなく、配列そのものを返している
-    let rows = json;
+    // ★ rows は必ず json[0].rows
+    const rows = json?.[0]?.rows || [];
 
-    if (!Array.isArray(rows)) {
-      return NextResponse.json({ error: "Response is not an array", raw: json });
-    }
-
-    // ★ IDフィルタ（detailページ用）
+    // ★ id が指定された場合 → 予約1件を返す
     if (idFilter) {
-      const item = rows.find(r => r.ReservationID === idFilter);
-      return NextResponse.json(item || null);
+      const item = rows.find((r) => r.ReservationID === idFilter);
+      return NextResponse.json(item || null, { status: 200 });
     }
 
-    // 日付フィルタ
+    // ★ 日付フィルタ
+    let filtered = rows;
     if (dateFilter) {
-      rows = rows.filter(r => r.Date === dateFilter);
+      filtered = filtered.filter((r) => r.Date === dateFilter);
     }
 
-    // 時間順ソート
-    rows.sort((a, b) =>
+    // ★ 時間順でソート
+    filtered.sort((a, b) =>
       (a.ArrivalTime || "").localeCompare(b.ArrivalTime || "")
     );
 
-    return NextResponse.json(rows);
+    return NextResponse.json(filtered, { status: 200 });
 
   } catch (e: any) {
     return NextResponse.json(
