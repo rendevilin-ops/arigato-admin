@@ -8,8 +8,7 @@ export default function Header() {
       <nav className="space-x-6">
         <Link href="/admin">Réservations</Link>
         <Link href="/admin/new">Nouvelle réservation</Link>
-        <Link href="/admin/customers">Clients</Link>
-        <Link href="/admin/holidays">Jours fériés / Fermetures</Link>
+        
       </nav>
     </header>
   );
