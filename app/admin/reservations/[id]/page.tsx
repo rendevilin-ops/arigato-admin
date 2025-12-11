@@ -83,11 +83,13 @@ export default function ReservationDetailPage({ params }) {
         {/* ArrivalTime */}
         <div>
           <label className="block text-sm font-medium">Arrival Time</label>
-          <input
-            value={data.ArrivalTime}
-            onChange={(e) => setData({ ...data, ArrivalTime: e.target.value })}
-            className="border p-2 rounded w-full"
-          />
+        <input
+          type="time"
+          value={data.ArrivalTime}
+          onChange={(e) => setData({ ...data, ArrivalTime: e.target.value })}
+          className="border p-2 rounded w-full"
+        />
+          
         </div>
 
         {/* First / Last Name */}
