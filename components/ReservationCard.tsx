@@ -9,12 +9,14 @@ export default function ReservationCard({ reservation }) {
   let bgColor = isLunch ? "bg-orange-50" : "bg-blue-50";
   let borderColor = isLunch ? "border-orange-300" : "border-blue-300";
   let textColor = "text-black";
+  let strike = "";
 
-  // ★ Cancelled の場合：グレーアウト
+  // ★ Cancelled の場合：グレーアウト + 打ち消し線
   if (data.Status === "cancelled") {
     bgColor = "bg-gray-200";
     borderColor = "border-gray-400";
     textColor = "text-gray-500";
+    strike = "line-through"; // ← 打ち消し線
   }
 
   return (
@@ -26,7 +28,7 @@ export default function ReservationCard({ reservation }) {
         href={`/admin/reservations/${data.ReservationID}`}
         className="flex-1 cursor-pointer"
       >
-        <div className={textColor}>
+        <div className={`${textColor} ${strike}`}>
           <h3 className="font-semibold text-lg">
             {data.FirstName} {data.LastName}
           </h3>
