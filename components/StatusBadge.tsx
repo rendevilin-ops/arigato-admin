@@ -25,7 +25,7 @@ export default function StatusBadge({
       reservation: updatedData,
     };
 
-    await fetch("/api/reservations/status-update", {
+    await fetch("/api/reservations/update-status", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
