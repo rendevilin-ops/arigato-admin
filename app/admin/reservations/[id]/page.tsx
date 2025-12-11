@@ -2,6 +2,17 @@
 
 import { useEffect, useState } from "react";
 
+function roundTo15(timeStr) {
+  if (!timeStr) return "";
+
+  const [h, m] = timeStr.split(":").map(Number);
+  const rounded = Math.round(m / 15) * 15;
+  const newM = String(rounded === 60 ? 0 : rounded).padStart(2, "0");
+  const newH = String(rounded === 60 ? (h + 1) % 24 : h).padStart(2, "0");
+
+  return `${newH}:${newM}`;
+}
+
 export default function ReservationDetailPage({ params }) {
   const { id } = params;
 
@@ -85,9 +96,11 @@ export default function ReservationDetailPage({ params }) {
           <label className="block text-sm font-medium">Arrival Time</label>
         <input
           type="time"
-          step="900"  // ← 15分刻み
-          value={data.ArrivalTime}
-          onChange={(e) => setData({ ...data, ArrivalTime: e.target.value })}
+          step="900"
+          value={roundTo15(data.ArrivalTime)}
+          onChange={(e) =>
+            setData({ ...data, ArrivalTime: e.target.value })
+          }
           className="border p-2 rounded w-full"
         />
           
