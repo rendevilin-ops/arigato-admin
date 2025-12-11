@@ -85,6 +85,7 @@ export default function ReservationDetailPage({ params }) {
           <label className="block text-sm font-medium">Arrival Time</label>
         <input
           type="time"
+          step="900"  // ← 15分刻み
           value={data.ArrivalTime}
           onChange={(e) => setData({ ...data, ArrivalTime: e.target.value })}
           className="border p-2 rounded w-full"
