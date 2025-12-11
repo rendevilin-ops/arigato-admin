@@ -1,122 +1,87 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import ReservationCard from "@/components/ReservationCard";
+import Loading from "@/components/Loading";
 
-// -----------------------
-// ダミーデータ（UI確認用）
-// 後で API の fetch に切り替える
-// -----------------------
-const dummyData = [
-  {
-    ReservationID: "A001",
-    ArrivalTime: "18:00",
-    FirstName: "Yuma",
-    LastName: "Yokoyama",
-    Pax: "2",
-    Status: "pending",
-  },
-  {
-    ReservationID: "A002",
-    ArrivalTime: "19:30",
-    FirstName: "Marie",
-    LastName: "Dupont",
-    Pax: "3",
-    Status: "confirmed",
-  },
-  {
-    ReservationID: "A003",
-    ArrivalTime: "21:00",
-    FirstName: "Pierre",
-    LastName: "Martin",
-    Pax: "1",
-    Status: "cancelled",
-  },
-];
-
-// -----------------------
-// Status Badge コンポーネント
-// -----------------------
-function StatusBadge({ status }: { status: string }) {
-  const COLOR: any = {
-    pending: "bg-yellow-200 text-yellow-800",
-    confirmed: "bg-green-200 text-green-800",
-    cancelled: "bg-red-200 text-red-800",
-  };
-
-  return (
-    <span className={`px-2 py-1 rounded text-sm ${COLOR[status]}`}>
-      {status}
-    </span>
-  );
+// 今日の日付 YYYY-MM-DD
+function today() {
+  return new Date().toISOString().split("T")[0];
 }
 
-// -----------------------
-// メイン Day View
-// -----------------------
-export default function AdminDayView() {
-  const today = new Date().toISOString().split("T")[0];
+// 日付を前後にずらす関数（唯一）
+function shiftDate(date: string, diff: number) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + diff);
+  return d.toISOString().split("T")[0];
+}
 
-  const [date, setDate] = useState(today);
+export default function ReservationsPage() {
+  const [reservations, setReservations] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState(today());
 
-  const prevDay = () => {
-    const d = new Date(date);
-    d.setDate(d.getDate() - 1);
-    setDate(d.toISOString().split("T")[0]);
-  };
+  async function load(date: string) {
+    setLoading(true);
 
-  const nextDay = () => {
-    const d = new Date(date);
-    d.setDate(d.getDate() + 1);
-    setDate(d.toISOString().split("T")[0]);
-  };
+    try {
+      const res = await fetch(`/api/reservations?date=${date}`, {
+        cache: "no-store",
+      });
+
+      const data = await res.json();
+      setReservations(data);
+    } catch (err) {
+      console.error("Failed to load reservations", err);
+      setReservations([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    load(selectedDate);
+  }, [selectedDate]);
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Réservations – {date}</h1>
+    <div className="p-6 space-y-4">
+      <h1 className="text-2xl font-bold">Reservations</h1>
 
-      {/* 日付コントロール */}
-      <div className="flex items-center gap-4">
-        <button onClick={prevDay} className="px-3 py-2 border rounded">
-          ← 前日
+      {/* ←→ ボタン付き 日付選択 */}
+      <div className="flex items-center gap-3">
+
+        <button
+          onClick={() => setSelectedDate(shiftDate(selectedDate, -1))}
+          className="px-3 py-2 bg-gray-700 text-white rounded"
+        >
+          ←
         </button>
 
         <input
           type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          className="border p-2 rounded"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+          className="border px-3 py-2 rounded-md"
         />
 
-        <button onClick={nextDay} className="px-3 py-2 border rounded">
-          翌日 →
+        <button
+          onClick={() => setSelectedDate(shiftDate(selectedDate, +1))}
+          className="px-3 py-2 bg-gray-700 text-white rounded"
+        >
+          →
         </button>
+
       </div>
 
-      {/* 予約一覧 */}
-      <div className="space-y-3">
-        {dummyData.map((r) => (
-          <div
-            key={r.ReservationID}
-            className="border rounded p-4 shadow-sm flex justify-between items-center"
-          >
-            <div>
-              <p className="text-lg font-semibold">
-                {r.ArrivalTime} — {r.FirstName} {r.LastName}
-              </p>
-              <p className="text-gray-600">{r.Pax} couverts</p>
-            </div>
+      {loading && <Loading />}
 
-            <div className="flex items-center gap-4">
-              <StatusBadge status={r.Status} />
+      {!loading && reservations.length === 0 && (
+        <p className="text-gray-500">No reservations.</p>
+      )}
 
-              <a
-                href={`/admin/reservations/${r.ReservationID}`}
-                className="text-blue-600 underline"
-              >
-                Détails
-              </a>
-            </div>
-          </div>
+      <div className="flex flex-col gap-3">
+        {reservations.map((r) => (
+          <ReservationCard key={r.ReservationID} reservation={r} />
         ))}
       </div>
     </div>
