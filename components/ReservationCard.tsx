@@ -13,14 +13,18 @@ export default function ReservationCard({ reservation }) {
   async function handleStatusChange(newStatus) {
     setStatus(newStatus);
 
-    await fetch("/api/reservations/update-status", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+  await fetch("/api/reservations/update-status", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      type: "status_update",
+      reservation: {
         ReservationID: data.ReservationID,
         Status: newStatus,
-      }),
-    });
+      }
+    }),
+  });
+
   }
 
   return (
