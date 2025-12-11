@@ -7,7 +7,7 @@ export default function Header() {
 
       <nav className="space-x-6">
         <Link href="/admin/reservations">Réservations</Link>
-        <Link href="https://arigato-five.vercel.app/">Nouvelle réservation</Link>
+        <Link href="https://arigato-five.vercel.app/aifutan-index.html">Nouvelle réservation</Link>
         
       </nav>
     </header>
