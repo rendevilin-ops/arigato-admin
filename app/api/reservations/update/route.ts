@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 const N8N_UPDATE_WEBHOOK =
-  "https://n8n-sab.onrender.com/webhook-test/reservation-update";
+  "https://n8n-sab.onrender.com/webhook/reservation-update";
 
 export async function POST(req: Request) {
   try {
@@ -33,3 +33,4 @@ export async function POST(req: Request) {
     );
   }
 }
+
