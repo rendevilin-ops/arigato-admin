@@ -31,10 +31,8 @@ export default function ReservationCard({ reservation }) {
       </Link>
 
       {/* ★ StatusBadge に ReservationID を渡す */}
-      <StatusBadge
-        status={data.Status}
-        reservationId={data.ReservationID}
-      />
+      <StatusBadge reservation={data} />
+
     </div>
   );
 }
