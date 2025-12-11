@@ -9,13 +9,7 @@ function today() {
   return new Date().toISOString().split("T")[0];
 }
 
-// 日付を加算・減算する関数
-function shiftDate(dateStr: string, diff: number) {
-  const d = new Date(dateStr);
-  d.setDate(d.getDate() + diff);
-  return d.toISOString().split("T")[0];
-}
-
+// 日付を前後にずらす関数（唯一）
 function shiftDate(date: string, diff: number) {
   const d = new Date(date);
   d.setDate(d.getDate() + diff);
@@ -52,33 +46,32 @@ export default function ReservationsPage() {
   return (
     <div className="p-6 space-y-4">
       <h1 className="text-2xl font-bold">Reservations</h1>
-      
+
       {/* ←→ ボタン付き 日付選択 */}
       <div className="flex items-center gap-3">
-      
+
         <button
           onClick={() => setSelectedDate(shiftDate(selectedDate, -1))}
           className="px-3 py-2 bg-gray-700 text-white rounded"
         >
           ←
         </button>
-      
+
         <input
           type="date"
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
           className="border px-3 py-2 rounded-md"
         />
-      
+
         <button
           onClick={() => setSelectedDate(shiftDate(selectedDate, +1))}
           className="px-3 py-2 bg-gray-700 text-white rounded"
         >
           →
         </button>
-      
+
       </div>
-      
 
       {loading && <Loading />}
 
