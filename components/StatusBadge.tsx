@@ -3,27 +3,32 @@
 import { useState } from "react";
 
 export default function StatusBadge({
-  status,
-  reservationId,
+  reservation,
 }: {
-  status: string;
-  reservationId: string;
+  reservation: any;
 }) {
-  const [value, setValue] = useState(status);
+  const [value, setValue] = useState(reservation.Status);
 
   async function handleChange(newStatus: string) {
     setValue(newStatus);
 
-    await fetch("/api/reservations/update-status", {
+    // ★ 変更後の予約データを作る
+    const updatedData = {
+      ...reservation,
+      Status: newStatus,
+      UpdateAt: new Date().toISOString(),
+    };
+
+    // ★ Payload を ReservationDetailPage と同じ形式にする
+    const payload = {
+      type: "reservation_update",
+      reservation: updatedData,
+    };
+
+    await fetch("/api/reservations/update", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "status_update",
-        reservation: {
-          ReservationID: reservationId,
-          Status: newStatus,
-        },
-      }),
+      body: JSON.stringify(payload),
     });
   }
 
