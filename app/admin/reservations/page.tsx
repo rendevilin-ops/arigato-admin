@@ -16,6 +16,12 @@ function shiftDate(dateStr: string, diff: number) {
   return d.toISOString().split("T")[0];
 }
 
+function shiftDate(date: string, diff: number) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + diff);
+  return d.toISOString().split("T")[0];
+}
+
 export default function ReservationsPage() {
   const [reservations, setReservations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,33 +52,33 @@ export default function ReservationsPage() {
   return (
     <div className="p-6 space-y-4">
       <h1 className="text-2xl font-bold">Reservations</h1>
-
-      {/* 日付選択 + 前後移動ボタン */}
+      
+      {/* ←→ ボタン付き 日付選択 */}
       <div className="flex items-center gap-3">
-        
-        {/* ← 前の日 */}
+      
         <button
           onClick={() => setSelectedDate(shiftDate(selectedDate, -1))}
-          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+          className="px-3 py-2 bg-gray-700 text-white rounded"
         >
           ←
         </button>
-
+      
         <input
           type="date"
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
           className="border px-3 py-2 rounded-md"
         />
-
-        {/* → 次の日 */}
+      
         <button
           onClick={() => setSelectedDate(shiftDate(selectedDate, +1))}
-          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+          className="px-3 py-2 bg-gray-700 text-white rounded"
         >
           →
         </button>
+      
       </div>
+      
 
       {loading && <Loading />}
 
