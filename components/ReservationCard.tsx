@@ -11,22 +11,32 @@ export default function ReservationCard({ reservation }) {
   const bgColor = isLunch ? "bg-orange-50" : "bg-blue-50";
   const borderColor = isLunch ? "border-orange-300" : "border-blue-300";
 
-  // ★ Status 変更時に API を叩く
+  // ★ Status 変更時に API を叩く（ログ付き）
   async function handleStatusChange(newStatus) {
+    console.log("----- STATUS CHANGE TRIGGERED -----");
+    console.log("Selected new status:", newStatus);
+    console.log("ReservationID:", data.ReservationID);
+
     setStatus(newStatus);
 
-  await fetch("/api/reservations/update-status", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
+    const payload = {
       type: "status_update",
       reservation: {
         ReservationID: data.ReservationID,
         Status: newStatus,
-      }
-    }),
-  });
+      },
+    };
 
+    console.log("Sending to API:", payload);
+
+    const res = await fetch("/api/reservations/update-status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    console.log("API responded with status:", res.status);
+    console.log("----- END STATUS CHANGE -----");
   }
 
   return (
@@ -34,7 +44,7 @@ export default function ReservationCard({ reservation }) {
       className={`p-4 rounded-lg border ${bgColor} ${borderColor} 
                   flex justify-between items-center mb-3`}
     >
-      {/* 左：予約詳細ページへのリンク部分 */}
+      {/* 左：予約詳細ページ */}
       <Link 
         href={`/admin/reservations/${data.ReservationID}`}
         className="flex-1 cursor-pointer"
@@ -60,7 +70,7 @@ export default function ReservationCard({ reservation }) {
           value={status}
           onChange={(e) => handleStatusChange(e.target.value)}
           className="border rounded px-2 py-1 text-sm"
-          onClick={(e) => e.stopPropagation()} // ★ Link へイベント伝播させない
+          onClick={(e) => e.stopPropagation()}
         >
           <option value="pending">Pending</option>
           <option value="confirmed">Confirmed</option>
