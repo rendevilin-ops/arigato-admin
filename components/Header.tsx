@@ -6,7 +6,7 @@ export default function Header() {
       <div className="text-xl font-bold">Arigato Admin</div>
 
       <nav className="space-x-6">
-        <Link href="/admin">Réservations</Link>
+        <Link href="/admin/reservation">Réservations</Link>
         <Link href="/admin/new">Nouvelle réservation</Link>
         
       </nav>
