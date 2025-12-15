@@ -223,7 +223,7 @@ export default function ReservationDetailPage({ params }) {
         
         {/* Sake */}
         <div>
-          <label className="block text-sm font-medium">Celebration</label>
+          <label className="block text-sm font-medium">Sake</label>
           <select
             value={data.Sake}
             onChange={(e) => setData({ ...data, Sake: e.target.value })}
