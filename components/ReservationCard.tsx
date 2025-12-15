@@ -29,7 +29,7 @@ export default function ReservationCard({ reservation }) {
         className="flex-1 cursor-pointer"
       >
         <div className={`${textColor} ${strike}`}>
-          <h3 className="font-semibold text-lg flex-wrap truncate">
+          <h3 className="font-semibold text-lg flex-wrap">
             {data.FirstName} {data.LastName}
           </h3>
 
