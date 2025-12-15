@@ -1,5 +1,6 @@
 import Link from "next/link";
-import StatusBadge from "./StatusBadge";
+import StatusBadge from "@/components/StatusBadge";
+
 
 export default function ReservationCard({ reservation }) {
   const data = reservation;
