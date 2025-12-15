@@ -84,21 +84,7 @@ export default function ReservationsPage() {
             )
           </div>
       
-          {/* 会席数 */}
-          <div className="text-sm text-red-700">
-            Kaiseki:{" "}
-            {
-              reservations.filter((r) => r.Kaiseki === TRUE || r.Kaiseki === "TRUE").length
-            }
-          </div>
-      
-          {/* 酒ペアリング数 */}
-          <div className="text-sm text-blue-700">
-            Sake Pairing:{" "}
-            {
-              reservations.filter((r) => r.Sake === TRUE|| r.Sake === "TRUE").length
-            }
-          </div>
+
       
         </div>
       )}
