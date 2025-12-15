@@ -40,6 +40,26 @@ export default function ReservationCard({ reservation }) {
           <p className="text-xs">
             Service: {data.service}
           </p>
+
+          {/* ★ Kaiseki / Sake バッジ */}
+          <div className="flex gap-2 mt-1">
+          
+            {/* Kaiseki */}
+            {data.Kaiseki === "Oui" && (
+              <span className="px-2 py-0.5 text-xs rounded bg-red-200 text-red-700 border border-red-300">
+                Kaiseki
+              </span>
+            )}
+          
+            {/* Sake Pairing */}
+            {data.Sake === "Oui" && (
+              <span className="px-2 py-0.5 text-xs rounded bg-blue-200 text-blue-700 border border-blue-300">
+                Sake Pairing
+              </span>
+            )}
+          
+          </div>
+
         </div>
       </Link>
 
