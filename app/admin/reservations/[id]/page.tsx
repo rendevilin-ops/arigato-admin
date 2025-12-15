@@ -208,6 +208,32 @@ export default function ReservationDetailPage({ params }) {
           </select>
         </div>
 
+        {/* Kaiseki */}
+        <div>
+          <label className="block text-sm font-medium">Kaiseki</label>
+          <select
+            value={data.Kaiseki}
+            onChange={(e) => setData({ ...data, Kaiseki: e.target.value })}
+            className="border p-2 rounded w-full"
+          >
+            <option value="FALSE">No</option>
+            <option value="TRUE">Yes</option>
+          </select>
+        </div>
+        
+        {/* Sake */}
+        <div>
+          <label className="block text-sm font-medium">Celebration</label>
+          <select
+            value={data.Sake}
+            onChange={(e) => setData({ ...data, Sake: e.target.value })}
+            className="border p-2 rounded w-full"
+          >
+            <option value="FALSE">No</option>
+            <option value="TRUE">Yes</option>
+          </select>
+        </div>
+        
         {/* Comment */}
         <div>
           <label className="block text-sm font-medium">Comment</label>
