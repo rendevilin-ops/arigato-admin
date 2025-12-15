@@ -73,6 +73,15 @@ export default function ReservationsPage() {
 
       </div>
 
+      {/* ▼ 予約件数 & ゲスト数の表示 */}
+      {!loading && reservations.length > 0 && (
+        <div className="text-lg font-semibold mt-2">
+          {reservations.length} Booking{reservations.length > 1 ? "s" : ""} (
+          {reservations.reduce((sum, r) => sum + Number(r.Pax || 0), 0)} Guests
+          )
+        </div>
+      )}
+
       {loading && <Loading />}
 
       {!loading && reservations.length === 0 && (
