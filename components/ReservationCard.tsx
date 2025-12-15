@@ -29,7 +29,8 @@ export default function ReservationCard({ reservation }) {
       >
         <div className={`${textColor} ${strike} min-w-0`}>
           <h3 className="font-semibold text-lg leading-tight">
-            <div className="truncate">{data.FirstName}{data.LastName}</div>
+            <div className="truncate">{data.FirstName}</div>
+            <div className="truncate">{data.LastName}</div>
           </h3>
 
           <p className="text-sm text-gray-700">
