@@ -1,5 +1,5 @@
 import Link from "next/link";
-import StatusBadge from "./StatusBadge";
+import StatusBadge from "@/components/StatusBadge";
 
 export default function ReservationCard({ reservation }) {
   const data = reservation;
@@ -22,7 +22,7 @@ export default function ReservationCard({ reservation }) {
       className={`p-4 rounded-lg border ${bgColor} ${borderColor}
                   flex justify-between items-center mb-3`}
     >
-      {/* ▼ 左：詳細リンク */}
+      {/* ▼ 左：詳細ページへのリンク */}
       <Link
         href={`/admin/reservations/${data.ReservationID}`}
         className="flex-1 cursor-pointer min-w-0"
@@ -53,7 +53,7 @@ export default function ReservationCard({ reservation }) {
         </div>
       </Link>
 
-      {/* ▼ 右：ステータスバッジ（リンク外、絶対に独立） */}
+      {/* ▼ 右：ステータスバッジ */}
       <div className="ml-3 flex-shrink-0">
         <StatusBadge reservation={data} />
       </div>
