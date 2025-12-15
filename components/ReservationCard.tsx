@@ -39,12 +39,12 @@ export default function ReservationCard({ reservation }) {
 
           {/* ▼ バッジ */}
           <div className="flex gap-2 mt-2 flex-wrap">
-            {data.Kaiseki === true && (
+            {data.Kaiseki === TRUE && (
               <span className="px-2 py-0.5 text-xs rounded bg-red-100 text-red-700">
                 Kaiseki
               </span>
             )}
-            {data.Sake === true && (
+            {data.Sake === TRUE && (
               <span className="px-2 py-0.5 text-xs rounded bg-blue-100 text-blue-700">
                 Sake Pairing
               </span>
