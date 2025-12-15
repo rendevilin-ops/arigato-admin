@@ -83,7 +83,17 @@ export default function ReservationsPage() {
             {reservations.reduce((sum, r) => sum + Number(r.Pax || 0), 0)} Guests
             )
           </div>
-      
+          
+          {/* 会席数 */}
+          <div className="text-sm text-red-700">
+            Kaiseki: {reservations.filter((r) => r.Kaiseki).length}
+          </div>
+          
+          {/* 酒ペアリング数 */}
+          <div className="text-sm text-blue-700">
+            Sake Pairing: {reservations.filter((r) => r.Sake).length}
+          </div>
+
 
       
         </div>
