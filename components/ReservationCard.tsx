@@ -28,10 +28,12 @@ export default function ReservationCard({ reservation }) {
         href={`/admin/reservations/${data.ReservationID}`}
         className="flex-1 cursor-pointer"
       >
-        <div className={`${textColor} ${strike}`}>
-          <h3 className="font-semibold text-lg">
-            {data.FirstName} {data.LastName}
-          </h3>
+        <div className="flex justify-between items-start">
+          <div className="flex-1 min-w-0">
+            {/* 左側（名前など） */}
+            <h3 className="font-semibold text-lg truncate">
+              {data.FirstName} {data.LastName}
+            </h3>
         
           <p className="text-sm text-gray-700">
             {data.ArrivalTime} / {data.Pax} pax · {data.service}
