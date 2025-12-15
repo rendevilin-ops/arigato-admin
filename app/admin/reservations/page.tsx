@@ -72,13 +72,34 @@ export default function ReservationsPage() {
         </button>
 
       </div>
-
-      {/* ▼ 予約件数 & ゲスト数の表示 */}
+      
+      {/* ▼ 予約件数 & メトリクス */}
       {!loading && reservations.length > 0 && (
-        <div className="text-lg font-semibold mt-2">
-          {reservations.length} Booking{reservations.length > 1 ? "s" : ""} (
-          {reservations.reduce((sum, r) => sum + Number(r.Pax || 0), 0)} Guests
-          )
+        <div className="text-lg font-semibold mt-2 space-y-1">
+      
+          {/* 件数とゲスト数 */}
+          <div>
+            {reservations.length} Booking{reservations.length > 1 ? "s" : ""} (
+            {reservations.reduce((sum, r) => sum + Number(r.Pax || 0), 0)} Guests
+            )
+          </div>
+      
+          {/* 会席数 */}
+          <div className="text-sm text-red-700">
+            Kaiseki:{" "}
+            {
+              reservations.filter((r) => r.Kaiseki === true || r.Kaiseki === "true").length
+            }
+          </div>
+      
+          {/* 酒ペアリング数 */}
+          <div className="text-sm text-blue-700">
+            Sake Pairing:{" "}
+            {
+              reservations.filter((r) => r.Sake === true || r.Sake === "true").length
+            }
+          </div>
+      
         </div>
       )}
 
