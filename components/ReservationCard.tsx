@@ -29,34 +29,34 @@ export default function ReservationCard({ reservation }) {
         className="flex-1 cursor-pointer"
       >
         <div className="flex justify-between items-start">
+        
+          {/* ▼ 左側 */}
           <div className="flex-1 min-w-0">
-            {/* 左側（名前など） */}
             <h3 className="font-semibold text-lg truncate">
               {data.FirstName} {data.LastName}
             </h3>
         
-          <p className="text-sm text-gray-700">
-            {data.ArrivalTime} / {data.Pax} pax · {data.service}
-          </p>
+            <p className="text-sm text-gray-700">
+              {data.ArrivalTime} / {data.Pax} pax · {data.service}
+            </p>
         
-          {/* ▼ バッジは1段下げて控えめに */}
-          <div className="flex gap-2 mt-2 flex-wrap">
-            {data.Kaiseki && (
-              <span className="px-2 py-0.5 text-xs rounded bg-red-100 text-red-700">
-                Kaiseki
-              </span>
-            )}
-            {data.Sake && (
-              <span className="px-2 py-0.5 text-xs rounded bg-blue-100 text-blue-700">
-                Sake Pairing
-              </span>
-            )}
+            <div className="flex gap-2 mt-2 flex-wrap">
+              {data.Kaiseki && (
+                <span className="px-2 py-0.5 text-xs rounded bg-red-100 text-red-700">
+                  Kaiseki
+                </span>
+              )}
+              {data.Sake && (
+                <span className="px-2 py-0.5 text-xs rounded bg-blue-100 text-blue-700">
+                  Sake Pairing
+                </span>
+              )}
+            </div>
           </div>
+        
+          {/* ▼ 右側（ステータス） */}
+          <StatusBadge reservation={data} />
+        
         </div>
-
-      </Link>
-
-      <StatusBadge reservation={data} />
-    </div>
   );
 }
