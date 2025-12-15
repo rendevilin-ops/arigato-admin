@@ -32,35 +32,26 @@ export default function ReservationCard({ reservation }) {
           <h3 className="font-semibold text-lg">
             {data.FirstName} {data.LastName}
           </h3>
-
-          <p className="text-sm">
-            {data.ArrivalTime} / {data.Pax} pax
+        
+          <p className="text-sm text-gray-700">
+            {data.ArrivalTime} / {data.Pax} pax · {data.service}
           </p>
-
-          <p className="text-xs">
-            Service: {data.service}
-          </p>
-
-          {/* ★ Kaiseki / Sake バッジ */}
-          <div className="flex gap-2 mt-1">
-          
-            {/* Kaiseki */}
-            {data.Kaiseki === "TRUE" && (
-              <span className="px-2 py-0.5 text-xs rounded bg-red-200 text-red-700 border border-red-300">
+        
+          {/* ▼ バッジは1段下げて控えめに */}
+          <div className="flex gap-2 mt-2 flex-wrap">
+            {data.Kaiseki && (
+              <span className="px-2 py-0.5 text-xs rounded bg-red-100 text-red-700">
                 Kaiseki
               </span>
             )}
-          
-            {/* Sake Pairing */}
-            {data.Sake === "TRUE" && (
-              <span className="px-2 py-0.5 text-xs rounded bg-blue-200 text-blue-700 border border-blue-300">
+            {data.Sake && (
+              <span className="px-2 py-0.5 text-xs rounded bg-blue-100 text-blue-700">
                 Sake Pairing
               </span>
             )}
-          
           </div>
-
         </div>
+
       </Link>
 
       <StatusBadge reservation={data} />
