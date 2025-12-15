@@ -42,7 +42,7 @@ export default function ReservationCard({ reservation }) {
           </p>
 
           {/* ★ Kaiseki / Sake バッジ */}
-          <div className="flex gap-2 mt-1">
+          <div className="flex gap-2 mt-2 flex-wrap">
           
             {/* Kaiseki */}
             {data.Kaiseki === "TRUE" && (
