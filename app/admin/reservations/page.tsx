@@ -86,12 +86,28 @@ export default function ReservationsPage() {
           
           {/* 会席数 */}
           <div className="text-sm text-red-700">
-            Kaiseki: {reservations.filter((r) => r.Kaiseki).length}
+            Kaiseki:{" "}
+            {
+              reservations.filter((r) =>
+                r.Kaiseki === true ||
+                r.Kaiseki === "TRUE" ||
+                r.Kaiseki === "true" ||
+                r.Kaiseki === 1
+              ).length
+            }
           </div>
           
           {/* 酒ペアリング数 */}
           <div className="text-sm text-blue-700">
-            Sake Pairing: {reservations.filter((r) => r.Sake).length}
+            Sake Pairing:{" "}
+            {
+              reservations.filter((r) =>
+                r.Sake === true ||
+                r.Sake === "TRUE" ||
+                r.Sake === "true" ||
+                r.Sake === 1
+              ).length
+            }
           </div>
 
 
