@@ -1,3 +1,4 @@
+// app/api/cancel/route.ts
 import { kv } from "@vercel/kv";
 
 export async function POST(req: Request) {
@@ -5,11 +6,10 @@ export async function POST(req: Request) {
     const { id } = await req.json();
 
     if (!id) {
-      return Response.json({ success: false }, { status: 400 });
+      return Response.json({ success: false, error: "ID required" }, { status: 400 });
     }
 
     const data = await kv.get("reservation");
-
     const rows = data?.reservation ?? [];
 
     let found = false;
@@ -22,13 +22,13 @@ export async function POST(req: Request) {
     });
 
     if (!found) {
-      return Response.json({ success: false }, { status: 404 });
+      return Response.json({ success: false, error: "Not found" }, { status: 404 });
     }
 
     await kv.set("reservation", { reservation: updated });
 
     return Response.json({ success: true });
   } catch (err: any) {
-    return Response.json({ error: err.message }, { status: 500 });
+    return Response.json({ success: false, error: err.message }, { status: 500 });
   }
 }
