@@ -9,10 +9,11 @@ export async function POST(req: Request) {
   try {
     console.log("STATUS UPDATE API: Received request");
 
+    const origin = req.headers.get("origin") || "";
+
     const body = await req.json();
     console.log("STATUS UPDATE API: Body =", body);
 
-    // n8n に転送
     const result = await fetch(N8N_STATUS_WEBHOOK, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -21,10 +22,19 @@ export async function POST(req: Request) {
 
     console.log("STATUS UPDATE API: n8n response", result.status);
 
-    return NextResponse.json({
-      ok: true,
-      n8nStatus: result.status,
-    });
+    return NextResponse.json(
+      {
+        ok: true,
+        n8nStatus: result.status,
+      },
+      {
+        headers: {
+          "Access-Control-Allow-Origin": origin,
+          "Access-Control-Allow-Methods": "POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
+        },
+      }
+    );
 
   } catch (err: any) {
     console.error("STATUS UPDATE API ERROR:", err);
@@ -36,4 +46,19 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
+}
+
+export async function OPTIONS(req: Request) {
+  const origin = req.headers.get("origin") || "";
+
+  return NextResponse.json(
+    {},
+    {
+      headers: {
+        "Access-Control-Allow-Origin": origin,
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    }
+  );
 }
