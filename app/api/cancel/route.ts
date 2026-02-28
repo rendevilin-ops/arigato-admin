@@ -5,15 +5,18 @@ export async function POST(req: Request) {
     const { id } = await req.json();
 
     if (!id) {
-      return Response.json({ success: false }, { status: 400 });
+      return Response.json({ error: "ID required" }, { status: 400 });
     }
 
     const data = await kv.get("reservation");
-    const rows = data?.reservation ?? [];
+
+    if (!data || !data.reservation) {
+      return Response.json({ error: "No reservations" }, { status: 404 });
+    }
 
     let found = false;
 
-    const updated = rows.map((r: any) => {
+    const updated = data.reservation.map((r: any) => {
       if (r.ReservationID === id) {
         if (r.status === "canceled") {
           throw new Error("Already canceled");
@@ -25,12 +28,13 @@ export async function POST(req: Request) {
     });
 
     if (!found) {
-      return Response.json({ success: false }, { status: 404 });
+      return Response.json({ error: "Not found" }, { status: 404 });
     }
 
     await kv.set("reservation", { reservation: updated });
 
     return Response.json({ success: true });
+
   } catch (err: any) {
     return Response.json({ error: err.message }, { status: 500 });
   }
