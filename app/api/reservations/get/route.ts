@@ -1,36 +1,42 @@
+// app/api/reservations/get/route.ts
+
 import { NextResponse } from "next/server";
+import { kv } from "@vercel/kv";
 
 export const runtime = "nodejs";
 
-const N8N_UPDATE_WEBHOOK =
-  "https://n8n-sab.onrender.com/webhook/reservation-update";
-
-export async function POST(req: Request) {
+export async function GET(req: Request) {
   try {
-    console.log("UPDATE API: Received request");
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
 
-    const body = await req.json();
-    console.log("UPDATE API: Body =", body);
+    if (!id) {
+      return NextResponse.json(
+        { error: "ReservationID is required" },
+        { status: 400 }
+      );
+    }
 
-    const result = await fetch(N8N_UPDATE_WEBHOOK, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+    const data: any = await kv.get("reservation");
+    const rows = data?.reservation ?? [];
 
-    console.log("UPDATE API: n8n response", result.status);
+    const reservation = rows.find(
+      (r: any) => r.ReservationID === id
+    );
 
-    return NextResponse.json({ ok: true, n8nStatus: result.status });
+    if (!reservation) {
+      return NextResponse.json(
+        { error: "Reservation not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ reservation });
 
   } catch (err: any) {
-    console.error("UPDATE API ERROR:", err);
     return NextResponse.json(
-      {
-        error: err.message || "Unknown error",
-        stack: err.stack || "",
-      },
+      { error: err.message || "Server error" },
       { status: 500 }
     );
   }
 }
-
