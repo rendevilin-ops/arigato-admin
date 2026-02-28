@@ -12,11 +12,15 @@ export async function POST(req: Request) {
       );
     }
 
+    // --------------------------
+    // 1️⃣ 予約取得
+    // --------------------------
     const data: any = await kv.get("reservation");
     const rows = data?.reservation ?? [];
 
     let found = false;
     let alreadyCanceled = false;
+    let canceledBooking: any = null;
 
     const updated = rows.map((r: any) => {
       if (r.ReservationID === id) {
@@ -26,6 +30,8 @@ export async function POST(req: Request) {
           alreadyCanceled = true;
           return r;
         }
+
+        canceledBooking = r;
 
         return { ...r, status: "canceled" };
       }
@@ -46,6 +52,23 @@ export async function POST(req: Request) {
       );
     }
 
+    // --------------------------
+    // 2️⃣ Availability戻し
+    // --------------------------
+    if (canceledBooking) {
+      const { date, service, pax } = canceledBooking;
+
+      const availability: any = await kv.get("availability");
+
+      if (availability?.[date]?.[service] !== undefined) {
+        availability[date][service] += Number(pax);
+        await kv.set("availability", availability);
+      }
+    }
+
+    // --------------------------
+    // 3️⃣ 予約保存
+    // --------------------------
     await kv.set("reservation", { reservation: updated });
 
     return Response.json({ success: true });
